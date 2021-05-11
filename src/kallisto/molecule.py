@@ -221,7 +221,7 @@ class Molecule(object):
         qs = self.get_eeq(charge)
         return getPolarizabilities(at, covcn, qs, charge)
 
-    def get_eeq(self, charge: int):
+    def get_eeq(self, charge: int, ies=False):
         """Get atomic electronegativity equilibration partial charges (eeqs).
 
         EEQ values are calculated for a given structure and are returned as an
@@ -232,7 +232,7 @@ class Molecule(object):
         at = self.get_atomic_numbers()
         coords = self.get_positions()
         cns = self.get_cns(cntype="cov")
-        return getAtomicPartialCharges(at, coords, cns, charge)
+        return getAtomicPartialCharges(at, coords, cns, charge, ies)
 
     def writeMolecule(self, name: str, path=cwd):
         """Write molecular structure."""

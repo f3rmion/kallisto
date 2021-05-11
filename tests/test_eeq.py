@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from tests.store import ch_radical
+from tests.store import ch_radical, pyridine
 
 
 def test_eeq():
@@ -27,3 +27,19 @@ def test_eeq_anion():
     eeq = mol.get_eeq(charge)
     assert np.isclose(eeq[0], -0.94103071)
     assert np.isclose(eeq[1], -0.05896929)
+
+
+def test_eeq_ies():
+    charge = 0
+    mol = pyridine()
+    ies = True
+    eeq = mol.get_eeq(charge, ies)
+    assert np.isclose(eeq, -0.05657355)
+
+
+def test_eeq_ies_cation():
+    charge = 1
+    mol = pyridine()
+    ies = True
+    eeq = mol.get_eeq(charge, ies)
+    assert np.isclose(eeq, 1.34730585)

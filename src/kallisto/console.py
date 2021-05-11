@@ -237,15 +237,20 @@ def sort(config, inp: str, start: str, out: click.File):
     required=False,
     help="Write to output file.",
 )
+@click.option("--ies", is_flag=True)
 @click.argument("inp", type=str, default="coord", required=True)
-def eeq(config, inp: str, out: click.File, chrg: int):
+def eeq(config, inp: str, ies: bool, out: click.File, chrg: int):
     """Electronegativity equilibration atomic partial charges."""
 
     molecule = ksr.constructMolecule(geometry=inp, out=out)
     nat = molecule.get_number_of_atoms()
-    eeq = molecule.get_eeq(chrg)
-    for i in range(nat):
-        silentPrinter(config.silent, eeq[i], out)
+    eeq = molecule.get_eeq(chrg, ies)
+
+    if ies:
+        silentPrinter(config.silent, eeq, out)
+    else:
+        for i in range(nat):
+            silentPrinter(config.silent, eeq[i], out)
 
     return eeq
 

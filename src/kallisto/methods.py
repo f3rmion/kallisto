@@ -145,7 +145,7 @@ def getProximityShells(
 
 
 def getAtomicPartialCharges(
-    at: np.ndarray, coords: np.ndarray, cns: np.ndarray, charge: int
+    at: np.ndarray, coords: np.ndarray, cns: np.ndarray, charge: int, ies: bool
 ):
     """A method to compute atomic electronegativity equilibration partial
         charges (eeqs).
@@ -212,7 +212,19 @@ def getAtomicPartialCharges(
     # get eeq charges
     qs = np.linalg.solve(A, X)
 
-    return qs[:-1]
+    if ies:
+        """Calculate isotropic electrostatic energy
+        E_iso = ∑i (ENi - κi·√CNi)·qi + ∑i (Jii + 2/√π·γii)·q²i
+              + ½ ∑i ∑j,j≠i qi·qj·2/√π·F0(γ²ij·R²ij)
+              = q·(½A·q - X)"""
+        from scipy.linalg.blas import dsymv, ddot
+
+        work = X
+        work = dsymv(a=A, x=qs, y=work, alpha=0.5, beta=-1.0)
+        ees = ddot(qs, work)
+        return ees
+    else:
+        return qs[:-1]
 
 
 def getPolarizabilities(at: np.ndarray, covcn: np.ndarray, qs: np.ndarray, charge: int):
